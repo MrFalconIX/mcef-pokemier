@@ -23,8 +23,11 @@ and `CefBrowser.setWindowlessFrameRate`. On a new branch, `pokemier`:
   - It had one argument too many, the `java.awt.Component` that MCEF removed.
   - Because of that, the definition got C++ linkage and was exported under a mangled name.
   - Java could not find it (`UnsatisfiedLinkError`), so CinemaMod's build of `81dba0e` cannot create browsers.
-- **`.github/workflows/build-jcef.yml`:** builds for Windows, Linux and macOS (amd64 and arm64) and publishes the archives as
+- **`.github/workflows/build-jcef.yml`:** builds for Windows and Linux (amd64 and arm64) and publishes the archives as
   a GitHub Release whose tag is `jcef-<commit hash>` (GitHub refuses tags of 40 hex characters). The original uploaded them to CinemaMod's server.
+  - Windows builds with Python 3.10 and Java 17, as Linux does: java-cef's Python scripts fail with the runner's newer Python.
+  - No macOS: CinemaMod's server has no CEF build of branch 6478 for macOS (HTTP 403), and the original's macos-13 runners
+    are gone. This build of MCEF does not work on macOS.
 
 ### MCEF (`common/src/main/java/com/cinemamod/mcef/`)
 
