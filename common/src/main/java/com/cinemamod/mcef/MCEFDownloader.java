@@ -18,8 +18,9 @@
  *     USA
  *
  *     Modified 2026-11-20 for Pokémier Azalea (see MODIFICATIONS.md):
- *     - a host that is a GitHub Releases address (".../releases/download") is used as such: the release's tag is the
- *       java-cef commit and the archives are its files (<host>/<commit>/<platform>.tar.gz).
+ *     - a host that is a GitHub Releases address (".../releases/download") is used as such: the release's tag is "jcef-" + the
+ *       java-cef commit (GitHub refuses tags of 40 hex characters) and the archives are its files:
+ *       <host>/jcef-<commit>/<platform>.tar.gz.
  */
 
 package com.cinemamod.mcef;
@@ -68,9 +69,9 @@ public class MCEFDownloader {
     }
 
     private String formatURL(String url) {
-        // Pokémier: GitHub Releases (the java-cef fork's builds): <host>/<commit>/<platform>.tar.gz
+        // Pokémier: GitHub Releases (the java-cef fork's builds): <host>/jcef-<commit>/<platform>.tar.gz
         if (host.contains("/releases/download")) {
-            url = url.replace("${host}/java-cef-builds/", "${host}/");
+            url = url.replace("${host}/java-cef-builds/", "${host}/jcef-");
         }
         return url
                 .replace("${host}", host)

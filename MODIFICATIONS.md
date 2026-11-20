@@ -24,7 +24,7 @@ and `CefBrowser.setWindowlessFrameRate`. On a new branch, `pokemier`:
   - Because of that, the definition got C++ linkage and was exported under a mangled name.
   - Java could not find it (`UnsatisfiedLinkError`), so CinemaMod's build of `81dba0e` cannot create browsers.
 - **`.github/workflows/build-jcef.yml`:** builds for Windows, Linux and macOS (amd64 and arm64) and publishes the archives as
-  a GitHub Release whose tag is the commit hash. The original uploaded them to CinemaMod's server.
+  a GitHub Release whose tag is `jcef-<commit hash>` (GitHub refuses tags of 40 hex characters). The original uploaded them to CinemaMod's server.
 
 ### MCEF (`common/src/main/java/com/cinemamod/mcef/`)
 
@@ -32,7 +32,7 @@ and `CefBrowser.setWindowlessFrameRate`. On a new branch, `pokemier`:
 |---|---|
 | `MCEFBrowser.java` | The browser is created with `CefBrowserSettings.windowless_frame_rate` from the settings (default 60). A new `setFrameRate(int)` changes it while the browser lives. |
 | `MCEFSettings.java` | New `windowless-frame-rate` (1 to 60, default 60). The download address is read from `pokemier-download-mirror` (default: the java-cef fork's GitHub Releases), so a mirror saved by stock MCEF is left alone. |
-| `MCEFDownloader.java` | A GitHub Releases address (`.../releases/download`) is used as `<address>/<commit>/<platform>.tar.gz`. |
+| `MCEFDownloader.java` | A GitHub Releases address (`.../releases/download`) is used as `<address>/jcef-<commit>/<platform>.tar.gz`. |
 | `MCEFClient.java` | Adapted to the java-cef of branch 6478: `onAudioStreamPacket` takes `float[]`, and `onFullscreenModeChange` is passed on to the display handlers. |
 | `mixins/CefDownloadMixin.java` | A `mcef.libraries.path` given at launch (`-Dmcef.libraries.path=...`) is kept instead of the default folder. Two builds of Chromium can then live side by side. |
 
