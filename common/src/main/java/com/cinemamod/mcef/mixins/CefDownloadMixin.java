@@ -16,6 +16,9 @@
  *     License along with this library; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *     USA
+ *
+ *     Modified 2026-11-20 for Pokémier Azalea (see MODIFICATIONS.md):
+ *     - a mcef.libraries.path given at launch (-Dmcef.libraries.path=...) is kept instead of the default folder.
  */
 
 package com.cinemamod.mcef.mixins;
@@ -51,14 +54,20 @@ public class CefDownloadMixin {
     private static void setupLibraryPath() throws IOException {
         final File mcefLibrariesDir;
 
-        // Check for development environment
-        // TODO: handle eclipse/others
-        // i.e. mcef-repo/neoforge/build
-        File buildDir = new File("../build");
-        if (buildDir.exists() && buildDir.isDirectory()) {
-            mcefLibrariesDir = new File(buildDir, "mcef-libraries/");
+        // Pokémier: a folder given at launch wins (two builds of Chromium side by side, or a game that has the default one open)
+        String given = System.getProperty("mcef.libraries.path");
+        if (given != null && !given.isBlank()) {
+            mcefLibrariesDir = new File(given);
         } else {
-            mcefLibrariesDir = new File("mods/mcef-libraries/");
+            // Check for development environment
+            // TODO: handle eclipse/others
+            // i.e. mcef-repo/neoforge/build
+            File buildDir = new File("../build");
+            if (buildDir.exists() && buildDir.isDirectory()) {
+                mcefLibrariesDir = new File(buildDir, "mcef-libraries/");
+            } else {
+                mcefLibrariesDir = new File("mods/mcef-libraries/");
+            }
         }
 
         mcefLibrariesDir.mkdirs();

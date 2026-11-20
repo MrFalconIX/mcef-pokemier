@@ -16,6 +16,10 @@
  *     License along with this library; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *     USA
+ *
+ *     Modified 2026-11-20 for Pokémier Azalea (see MODIFICATIONS.md):
+ *     - onFullscreenModeChange is passed on to the display handlers (CefDisplayHandler has it in that build);
+ *     - onAudioStreamPacket takes the audio as float[], the signature of the java-cef build used (branch 6478, 81dba0e).
  */
 
 package com.cinemamod.mcef;
@@ -31,7 +35,6 @@ import org.cef.handler.CefContextMenuHandler;
 import org.cef.handler.CefDisplayHandler;
 import org.cef.handler.CefLoadHandler;
 import org.cef.misc.CefAudioParameters;
-import org.cef.misc.DataPointer;
 import org.cef.network.CefRequest;
 
 import java.util.ArrayList;
@@ -131,6 +134,12 @@ public class MCEFClient implements CefLoadHandler, CefContextMenuHandler, CefDis
         return false;
     }
 
+    // Pokémier: CefDisplayHandler of the java-cef build used has this one too
+    @Override
+    public void onFullscreenModeChange(CefBrowser browser, boolean fullscreen) {
+        for (CefDisplayHandler displayHandler : displayHandlers) displayHandler.onFullscreenModeChange(browser, fullscreen);
+    }
+
     @Override
     public void onStatusMessage(CefBrowser browser, String value) {
         for (CefDisplayHandler displayHandler : displayHandlers) displayHandler.onStatusMessage(browser, value);
@@ -173,7 +182,7 @@ public class MCEFClient implements CefLoadHandler, CefContextMenuHandler, CefDis
     }
     
     @Override
-    public void onAudioStreamPacket(CefBrowser browser, DataPointer data, int frames, long pts) {
+    public void onAudioStreamPacket(CefBrowser browser, float[] data, int frames, long pts) {
         for (CefAudioHandler audioHandler : audioHandlers) {
             audioHandler.onAudioStreamPacket(browser, data, frames, pts);
         }

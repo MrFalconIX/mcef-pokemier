@@ -3,6 +3,11 @@
 </p>
 
 # MCEF (Minecraft Chromium Embedded Framework)
+
+> **Pokémier build.** This is a modified version of MCEF 2.1.6 for Minecraft 1.21.1, made for the Pokémier Azalea mod: pages
+> are drawn at up to 60 frames a second instead of 30. What changed and why is in [MODIFICATIONS.md](MODIFICATIONS.md). It
+> replaces stock MCEF; do not install both. License: LGPL-2.1, like the original.
+
 MCEF is a mod and library for adding the Chromium web browser into Minecraft.
 
 MCEF is based on java-cef (Java Chromium Embedded Framework), which is based on CEF (Chromium Embedded Framework), which is based on Chromium. It was originally created by montoyo. It was rewritten and currently maintained by the CinemaMod Group.

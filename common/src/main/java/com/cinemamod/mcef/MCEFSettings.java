@@ -16,6 +16,11 @@
  *     License along with this library; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *     USA
+ *
+ *     Modified 2026-11-20 for Pokémier Azalea (see MODIFICATIONS.md):
+ *     - "pokemier-download-mirror" (default: the java-cef fork's GitHub Releases) instead of "download-mirror": its build of
+ *       java-cef is not on CinemaMod's server, and a mirror saved by MCEF itself is left alone;
+ *     - "windowless-frame-rate": the frame rate of the browsers without a window (1 to 60, default 60; was fixed at 30).
  */
 
 package com.cinemamod.mcef;
@@ -37,17 +42,31 @@ public class MCEFSettings {
             .resolve("mcef")
             .resolve("mcef.properties");
     private static int deleteRetries = 0;
+    /** Pokémier: where the builds of the java-cef fork are (GitHub Releases, tag = commit). Change it to your fork's address. */
+    public static final String DEFAULT_MIRROR = "https://github.com/MrFalconIX/java-cef-pokemier/releases/download";
 
     private boolean skipDownload;
     private String downloadMirror;
     private String userAgent;
     private boolean useCache;
+    /** Pokémier: frames a second of a browser without a window (Chromium's default was 30). */
+    private int windowlessFrameRate;
 
     public MCEFSettings() {
         skipDownload = false;
-        downloadMirror = "https://mcef-download.cinemamod.com";
+        downloadMirror = DEFAULT_MIRROR;
         userAgent = null;
         useCache = true;
+        windowlessFrameRate = 60;
+    }
+
+    public int getWindowlessFrameRate() {
+        return windowlessFrameRate;
+    }
+
+    public void setWindowlessFrameRate(int windowlessFrameRate) {
+        this.windowlessFrameRate = Math.max(1, Math.min(60, windowlessFrameRate));
+        saveAsync();
     }
 
     public boolean isSkipDownload() {
@@ -107,9 +126,10 @@ public class MCEFSettings {
 
         Properties properties = new Properties();
         properties.setProperty("skip-download", String.valueOf(skipDownload));
-        properties.setProperty("download-mirror", String.valueOf(downloadMirror));
+        properties.setProperty("pokemier-download-mirror", String.valueOf(downloadMirror));
         properties.setProperty("user-agent", String.valueOf(userAgent));
         properties.setProperty("use-cache", String.valueOf(useCache));
+        properties.setProperty("windowless-frame-rate", String.valueOf(windowlessFrameRate));
 
         try (FileOutputStream output = new FileOutputStream(file)) {
             properties.store(output, null);
@@ -131,9 +151,11 @@ public class MCEFSettings {
 
         try {
             skipDownload = Boolean.parseBoolean(properties.getProperty("skip-download"));
-            downloadMirror = properties.getProperty("download-mirror");
+            downloadMirror = properties.getProperty("pokemier-download-mirror", DEFAULT_MIRROR);
             userAgent = properties.getProperty("user-agent");
             useCache = Boolean.parseBoolean(properties.getProperty("use-cache"));
+            String frameRate = properties.getProperty("windowless-frame-rate");
+            windowlessFrameRate = frameRate == null ? 60 : Math.max(1, Math.min(60, Integer.parseInt(frameRate.trim())));
         } catch (Exception e) {
             // Delete and re-create the file if there was a parsing error
             if (deleteRetries++ > 20)

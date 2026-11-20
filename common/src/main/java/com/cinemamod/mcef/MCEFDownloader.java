@@ -16,6 +16,10 @@
  *     License along with this library; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *     USA
+ *
+ *     Modified 2026-11-20 for Pokémier Azalea (see MODIFICATIONS.md):
+ *     - a host that is a GitHub Releases address (".../releases/download") is used as such: the release's tag is the
+ *       java-cef commit and the archives are its files (<host>/<commit>/<platform>.tar.gz).
  */
 
 package com.cinemamod.mcef;
@@ -64,6 +68,10 @@ public class MCEFDownloader {
     }
 
     private String formatURL(String url) {
+        // Pokémier: GitHub Releases (the java-cef fork's builds): <host>/<commit>/<platform>.tar.gz
+        if (host.contains("/releases/download")) {
+            url = url.replace("${host}/java-cef-builds/", "${host}/");
+        }
         return url
                 .replace("${host}", host)
                 .replace("${java-cef-commit}", javaCefCommitHash)

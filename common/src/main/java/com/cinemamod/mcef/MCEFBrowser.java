@@ -16,6 +16,10 @@
  *     License along with this library; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *     USA
+ *
+ *     Modified 2026-11-20 for Pokémier Azalea (see MODIFICATIONS.md):
+ *     - the browser is created with CefBrowserSettings.windowless_frame_rate from MCEFSettings (it was Chromium's default, 30);
+ *     - setFrameRate() changes it while the browser lives.
  */
 
 package com.cinemamod.mcef;
@@ -85,11 +89,23 @@ public class MCEFBrowser extends CefBrowserOsr {
     protected boolean popupDrawn = false;
 
     public MCEFBrowser(MCEFClient client, String url, boolean transparent) {
-        super(client.getHandle(), url, transparent, null);
+        super(client.getHandle(), url, transparent, null, frameRateSettings());
         renderer = new MCEFRenderer(transparent);
         cursorChangeListener = (cefCursorID) -> setCursor(CefCursorType.fromId(cefCursorID));
 
         Minecraft.getInstance().submit(renderer::initialize);
+    }
+
+    /** Pokémier: the browser's settings, with the frame rate of MCEFSettings. */
+    private static org.cef.CefBrowserSettings frameRateSettings() {
+        org.cef.CefBrowserSettings settings = new org.cef.CefBrowserSettings();
+        settings.windowless_frame_rate = MCEF.getSettings().getWindowlessFrameRate();
+        return settings;
+    }
+
+    /** Pokémier: changes the frame rate of this browser (1 to 60) while it lives. */
+    public void setFrameRate(int frameRate) {
+        setWindowlessFrameRate(Math.max(1, Math.min(60, frameRate)));
     }
 
     public MCEFRenderer getRenderer() {
