@@ -26,6 +26,11 @@ and `CefBrowser.setWindowlessFrameRate`. On a new branch, `pokemier`:
 - **`.github/workflows/build-jcef.yml`:** builds for Windows and Linux (amd64 and arm64) and publishes the archives as
   a GitHub Release whose tag is `jcef-<commit hash>` (GitHub refuses tags of 40 hex characters). The original uploaded them to CinemaMod's server.
   - Windows builds with Python 3.10 and Java 17, as Linux does: java-cef's Python scripts fail with the runner's newer Python.
+  - arm64 builds on GitHub's arm64 runners (`ubuntu-22.04-arm`, `windows-11-arm`) with an arm64 JDK, instead of
+    cross-compiling on x86.
+- **`CMakeLists.txt`:** on Linux and Windows the CEF build downloaded follows `PROJECT_ARCH` (or the processor), not only
+  the pointer size. Before, arm64 got the x86 CEF: the Windows arm64 build could not link (`libcef.lib` was x64), and the
+  Linux arm64 archive of the original was x86 under an arm64 name.
   - No macOS: CinemaMod's server has no CEF build of branch 6478 for macOS (HTTP 403), and the original's macos-13 runners
     are gone. This build of MCEF does not work on macOS.
 
